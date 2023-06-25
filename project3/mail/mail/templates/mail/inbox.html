@@ -1,0 +1,84 @@
+{% extends "mail/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-top: 1vw;">
+        <a class="navbar-brand" href="#">{{ request.user.email }}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+            <a class="nav-link" id="inbox">Inbox</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" id="compose">Compose</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" id="sent">Sent</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" id="archived">Archived</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <a class="btn btn-outline-danger my-2 my-sm-0" href="{% url 'logout' %}">Log Out</a>
+        </form>
+        </div>
+    </nav>
+    <hr>
+
+    <div id="emails-view">
+        <h3 id="title" style="margin-top: 1.5vw;"></h3>
+        <table class="table table-hover" style="margin-top: 1vw; padding: 1vw;">
+            <thead class="table border table-borderless">
+              <tr>
+                <th scope="col">Sender</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Time</th>
+              </tr>
+            </thead>
+            <tbody id="box" class="table border">
+            </tbody>
+          </table>
+    </div>
+
+    <div id="compose-view">
+        <h3>New Email</h3>
+        <form id="compose-form" style="margin-bottom: 2vw;">
+            <div class="form-group">
+                From: <input disabled class="form-control" value="{{ request.user.email }}">
+            </div>
+            <div class="form-group">
+                To: <input id="compose-recipients" class="form-control">
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="compose-subject" placeholder="Subject">
+            </div>
+            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+            <br>
+            <input type="submit" class="btn btn-outline-success"/>
+        </form>
+    </div>
+
+    <div id="read-view">
+        <div class="card">
+            <div class="card-body">
+              <h4 class="card-title" id="read-subject">Subject</h4>
+              <h6 class="card-subtitle mb-2 text-body-secondary" id="read-sender" style="color: grey;">Sender</h6>
+              <h6 class="card-subtitle mb-2 text-body-secondary" id="read-time" style="color: grey;">Timestamp</h6>
+              <span id="read-receiver" style="font-size: 75%;">Receiver</span>
+              <hr>
+              <p class="card-text" id="read-body">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <hr>
+              <a href="#" class="btn btn-outline-success" id="read-button">Reply</a>
+            </div>
+          </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'mail/inbox.js' %}"></script>
+{% endblock %}
