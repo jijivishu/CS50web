@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Google Advanced Search</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div>
+            <div class="navbar">
+                <div class="logo">
+                    <img src="google_logo.png" alt="Google Logo" style="height: 24px; width: 74; vertical-align: middle;">
+                </div>
+                <div class="navcollection">
+                    <a href="index.html">back to Google Search</a>
+                </div>
+            </div>
+
+            <div class="adv--title">
+                <label>Advanced search</label>
+            </div>
+            <div class="divider"></div>
+
+            <div>
+                <form action="https://www.google.com/search" class="adv--form">
+                    <div class="row">
+                        <div class="left_column_head"><span>Find pages with...</span></div>
+                        <div class="mid_column"></div>
+                        <div class="right_column_head"><span>To do this in the search box.</span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="left_column"><span>all these words:</span></div>
+                        <div class="mid_column"><input class="adv--input" type="text" name="as_q"></div>
+                        <div class="right_column"><span>Type the important words: tri-colour rat terrier</span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="left_column"><span>this exact word or phrase:</span></div>
+                        <div class="mid_column"><input class="adv--input" type="text" name="as_epq"></div>
+                        <div class="right_column"><span>Put exact words in quotes: "rat terrier"</span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="left_column"><span>any of these words:</span></div>
+                        <div class="mid_column"><input class="adv--input" type="text" name="as_oq"></div>
+                        <div class="right_column"><span>Type OR between all the words you want: miniature OR standard</span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="left_column"><span>none of these words:</span></div>
+                        <div class="mid_column"><input class="adv--input" type="text" name="as_eq"></div>
+                        <div class="right_column"><span>Put a minus sign just before words that you don't want: -rodent, -"Jack Russell"</span></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="left_column"></div>
+                        <div class="mid_column"><input class="adv--buttons" type="submit" value="Google Advanced Search"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

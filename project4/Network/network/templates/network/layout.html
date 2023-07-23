@@ -1,0 +1,219 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Logo and Title -->
+        <title>{% block title %}Fame of Thrones{% endblock %}</title>
+        <link rel="icon" href="{% static 'network/logo.jpg' %}" type="image/x-icon">
+
+        <!-- Stylesheets by Google (for Montserrat, used as primary font), Adobe (for Trojan Pro, used for designing logo) and styles.css (for UI design)-->
+        <!-- Bootstrap is negligibly used for simple management of margins. Its avoidance can be covered with a bunch of lines of extra CSS code -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+        <link href="{% static 'network/styles.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="https://use.typekit.net/shc4zcg.css">
+
+        <!-- Meta tag to scale content to device's width -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <!-- Access javascript stored separately in script.js, and send these values to client-side for ease of processing -->
+        <script src="{% static 'network/script.js' %}"></script>
+        <script>
+            var current_user = "{{ user.id }}";
+            var visited_user = "{{ who.id }}";
+            var who_pfp = "{{ user.pfp }}";
+            var who = "{{ user.username }}";
+            var current_time = "{{ who.info }}";
+            var media = "{% get_media_prefix %}";
+            var static = "{% get_static_prefix %}";
+            var create = "{% url 'create' %}";
+            var edit_url = "{% url 'edit' %}";
+            var message = "{{ message }}";
+        </script>
+    </head>
+
+    <body>
+        <!--csrf_token for security-->
+        {% csrf_token %}
+
+        <!-- Displaying navigation bar if user is logged in -->
+        {% if user.is_authenticated %}
+
+            <!-- who variable stores current user info unless they visit a profile, in that case it stores the data of visited profile-->
+            <!-- If who and user are different, user has visited some profile. Thus, display this navigation bar on top to let user get back to home page or perform tasks -->
+            {% if who != user %}
+                <div class="head" id="nav">
+                    <a class="user" href="{% url 'index' %}">
+                        {% if user.pfp %}
+                            <img src="{{ user.pfp.url }}" class="user-pfp-shrink">
+                        {% else %}
+                            <img src="{% get_static_prefix %}{{ 'network/nopfp.png' }}" class="user-pfp-shrink">
+                        {% endif %}
+                        <div class="title-shrink">hi, {{ user.username }}</div>
+                    </a>
+                    <div class="navs-shrink">
+                        <h3 class="navlink create"><a href="{% url 'index' %}">All</a></h3>
+                        <h3 class="navlink create"><a href="{% url 'feed' %}">Feed</a></h3>
+                        <h3 class="navlink create"><a onclick="edit(event, 0)">Create</a></h3>
+                        <h3 class="navlink create"><a href="{% url 'your' %}">Your</a></h3>
+                        <h3 class="navlink create" id="logout"><a href="{% url 'logout' %}">Logout</a></h3>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+        
+        <!-- This div(.home) is just for the sake of offering padding to the whole website and keep it in flex column-->
+        <div class="home">
+
+            <!-- If user is logged in, display his name, profile pic, followers and following. Otherwise display the name of the website, login menu and register menu-->
+            <div id="top">
+                {% if user.is_authenticated %}
+                    <script>
+                        var logged = 1;
+                    </script>
+                    {% if who.username == user.username %}
+                        <div id="blank-top"></div>
+                    {% endif %}
+                    {% if who.pfp %}
+                        <img src="{{ who.pfp.url }}" class="user-pfp">
+                    {% else %}
+                        <img src="{% get_static_prefix %}{{ 'network/nopfp.png' }}" class="user-pfp">
+                    {% endif %}
+                    {% if who.username == user.username %}
+                        <div class="title self">hi, {{ user.username }}</div>
+                    {% else %}
+                        <div class="instant-follow-thumb">
+                            <div class="title" id="username">{{ who.username }}</div>
+                            <div class="instant-follow-switch" id="instant-follow-switch"></div>
+                        </div>
+                    {% endif %}
+                    {% if message %}
+                        <div class="message">
+                            <ul>
+                                <li id="li">{{ message }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <div class="navs" id="follow-data-display"></div>
+                {% else %}
+                    <script>
+                        var logged = 0;
+                    </script>
+                    <div id="blank-top"></div>
+                    <div id="blank-top"></div>
+                    <div class="title" id="logo">F A M E &nbsp;&nbsp;&nbsp;O F &nbsp;&nbsp;&nbsp;T H R O N E S</div>
+                    {% if message %}
+                        <div class="message">
+                            <ul>
+                                <li id="li">{{ message }}</li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <div class="navs" id="follow-data-display"></div>
+                {% endif %}
+                
+                <!-- Display navigation bar at the middle of the landing page if the user is logged in-->
+                <div class="navs">
+                    {% if user.is_authenticated %}
+                        {% if who == user %}
+                        <h3 class="navlink create"><a href="{% url 'index' %}">All</a></h3>
+                        <h3 class="navlink create"><a href="{% url 'feed' %}">Feed</a></h3>
+                        <h3 class="navlink create"><a onclick="edit(event, 0)">Create</a></h3>
+                        <h3 class="navlink create"><a href="{% url 'your' %}">Your</a></h3>
+                        <h3 class="navlink create" id="logout"><a href="{% url 'logout' %}">Logout</a></h3>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Divide posts from user profile with this line -->
+            <div class="line" id="main_line"></div>
+            
+                <!-- Display posts on a responsive grid -->
+                <div class="feed">
+                    <div class="content">
+
+                        <!-- Generate each post dynamically using Django tags, allowing user thumbnail to be clickable and like, edit functionality to be accessible only when user is logged in -->
+                        {% for post in posts %}
+                            <div class="post" onclick = 'load_post(event, "{{ post.id }}")'>
+                                <div class="poster">
+                                    {% if user.is_authenticated %}
+                                        <a class="poster-thumb" href="{% url 'user' post.owner.id %}">
+                                            {% if post.owner.pfp %}
+                                                <img src="{% get_media_prefix %}{{ post.owner.pfp }}" class="poster-pfp" >
+                                            {% else %}
+                                                <img src="{% get_static_prefix %}{{ 'network/nopfp.png' }}" class="poster-pfp">
+                                            {% endif %}
+                                            <h3 class="poster-name">{{ post.owner.username }}</h3>
+                                        </a>
+                                    {% else %}
+                                        <a class="poster-thumb">
+                                            {% if post.owner.pfp %}
+                                                <img src="{% get_media_prefix %}{{ post.owner.pfp }}" class="poster-pfp" >
+                                            {% else %}
+                                                <img src="{% get_static_prefix %}{{ 'network/nopfp.png' }}" class="poster-pfp">
+                                            {% endif %}
+                                            <h3 class="poster-name">{{ post.owner.username }}</h3>
+                                        </a>
+                                    {% endif %}
+                                    
+                                    
+                                    {% if user.is_authenticated %}
+                                    <div class="box-like-icon">
+                                        {% if post.owner == user %}
+                                            <img src="{% get_static_prefix %}{{ 'network/edit.svg' }}" class="like-icon edit" onclick='edit(event, "{{ post.id }}")' id="edit-icon-{{ post.id }}"></img>
+                                        {% endif %}
+                                        {% if post.like_status %}
+                                            <img src="{% get_static_prefix %}{{ 'network/liked.svg' }}" class="like-icon" onclick= 'liked("{{ post.id }}", 1)' id="like-icon-{{ post.id }}"></img>
+                                        {% else %}
+                                            <img src="{% get_static_prefix %}{{ 'network/like.svg' }}" class="like-icon" onclick= 'liked("{{ post.id }}", 1)' id="like-icon-{{ post.id }}"></img>
+                                        {% endif %}
+                                    </div>
+                                        
+                                        
+                                    {% else %}
+                                        <div class="like-icon"></div>
+                                    {% endif %}
+                                    <span class="datetime">{{ post.info }}</span>
+                                    {% if post.likes == 1 %}
+                                        <span class="post-likes" id="like-stat-{{ post.id }}">1 like</span>
+                                    {% else %}
+                                        <span class="post-likes" id="like-stat-{{ post.id }}">{{ post.likes }} likes</span>
+                                    {% endif %}
+                                </div>
+                                <div class="post-content">
+                                    {% if post.image %}
+                                        <img src="{% get_media_prefix %}{{ post.image }}" class="post-img">
+                                    {% endif %}
+                                    <span class="post-caption">{{ post.content }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <br>
+                    <br>
+
+                    <!-- Add pagination through Django -->
+                    <div>
+                        <span>
+                            {% if posts.has_previous %}
+                                <a href="?page=1">&laquo; first</a>
+                                <a href="?page={{ posts.previous_page_number }}">previous</a>
+                            {% endif %}
+                    
+                            <span>
+                                Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                            </span>
+                    
+                            {% if posts.has_next %}
+                                <a href="?page={{ posts.next_page_number }}">next</a>
+                                <a href="?page={{ posts.paginator.num_pages }}">last &raquo;&raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+            </div>       
+        </div>
+    </body>
+</html>

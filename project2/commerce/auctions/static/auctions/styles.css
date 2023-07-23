@@ -1,0 +1,11 @@
+body {
+    padding: 10px;
+}
+
+.card-deck {
+    margin-top: 10px;
+    margin-left: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    grid-gap: 2rem;
+}

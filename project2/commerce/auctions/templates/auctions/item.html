@@ -1,0 +1,76 @@
+{% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <h2>{{list.title}}</h2>
+    {% if list.bid_post.get.bidder == request.user and list.status == False %}
+        <div class="alert alert-success" role="alert">
+            <h5>Wuhuuu! You have won this auction</h5>
+        </div>
+    {% endif %}
+
+    <div class="card mx-auto" style="width: 60vw; margin-top: 1.5vw;">
+        <div class="card-header">
+            {{list.description}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{list.cat_post.get.category}}</h5>
+          <img class="card-img-top" src='{{list.image_link}}' alt="{{list.post.title}}">
+          {% if user.is_authenticated %}
+            {% if list.status %}
+                <p></p>
+                <div>
+                    <a class="btn btn-dark" href="{% url 'watch' list.id %}">{{ message }} Watchlist</a>
+                </div>
+                
+                {% if match %}
+                <p></p>
+                    <div>
+                        <a class="btn btn-dark" href="{% url 'close' list.id %}">Close the listing</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        <hr>
+        <h4 class="card-text">${{list.bid_post.get.bid}}</h4>
+        {% if user.is_authenticated %}
+            {% if list.status %}
+                {% if request.user != list.owner %}
+                    <form action="{% url 'bidding' list.id %}" method="post">
+                        {% csrf_token %}
+                        <input class="form-control" type="number" min="{{ max }}" name="new_bid" placeholder="Enter bid amount (MUST BE more than current bid)" style="margin-bottom: 1vw;" step="any" required>
+                        <input type="submit" value="Place Bid" class="btn btn-outline-dark">
+                    </form>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+        </div>
+        <div class="card-footer">
+            {% if user.is_authenticated %}
+                {% if list.status %}
+                    <form action="{% url 'item' list.id %}" method="post">
+                        {% csrf_token %}
+                        {{ comment | crispy }} 
+                        <input type="submit" value="Post" class="btn btn-outline-dark">
+                    </form>
+                {% endif %}
+            {% endif %}
+            {% if list.com_title.all %}
+            <br>
+                <h4>Comments</h4>
+                <hr>
+            {% endif %}
+            <div class="card"> 
+                {% for something in list.com_title.all %}
+                        
+                    <div class="card-body">
+                        <h5 class="card-title">{{something.commentator}}</h5>
+                        <span class="card-text">{{something.comment}}</span>
+                        <p class="card-text"><small class="text-muted">{{something.comment_time}}</small></p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

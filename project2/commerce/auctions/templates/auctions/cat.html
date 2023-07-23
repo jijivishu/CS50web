@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ cat }}</h2>
+
+    <div class="container" style="padding-top: 1%;">
+        <div class="card-deck">
+            {% for list in lists %}
+                {% if list.post.status or list.bidder == request.user %}
+                    <div class="card" >         
+                        <div>
+                            <img class="card-img-top" src='{{list.post.image_link}}' alt="{{list.post.title}}">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{list.post.title}}</h5>
+                            <p class="card-text">{{list.post.description}}</p>
+                            <p class="card-text"><small class="text-muted">by {{list.post.owner}}</small></p>
+                            <a href="{% url 'item' list.post.id %}" class="stretched-link">{{list.bid}}</a>
+                            {% if list.bidder == request.user and list.post.status == False %}
+                                <h5>Wuhuuu! You have won this auction</h5>
+                            {% endif %}
+                        </div>               
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    
+{% endblock %}

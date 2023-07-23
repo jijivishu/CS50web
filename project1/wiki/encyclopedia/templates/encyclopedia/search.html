@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+    {{ list.title }}: Search
+{% endblock %}
+
+{% block body %}
+    <div style="padding: 2%">
+        <h1>Search results for {{ list.title }}</h1>
+
+        <ul class="list-group list-group-flush">
+            {% for entry in list.entries %}
+                <li class="list-group-item"> <a href="{% url 'title' entry  %}">{{ entry }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
