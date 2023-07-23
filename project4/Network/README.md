@@ -1,4 +1,4 @@
-#Fame of Thrones
+# Fame of Thrones
 
 Fame Of Thrones is a Game of Thrones Parody single-page social networking website designed on the basics of requisites for Harvard's CS50W's Project 4 - Network.
 
